@@ -10,6 +10,9 @@ header{
 	font-size:35px;
 	padding:5px;
 }
+h1{
+	font-size:30px;
+}
 p{
 	text-align:left;
 	padding:2px;
@@ -28,6 +31,7 @@ p{
 	width:40%;
 	margin:0 auto;
 	overflow:auto;
+	padding:10px;
 }
 #username{
 	width:74%;
@@ -58,6 +62,11 @@ p{
 #right-upper-text{
 	font-size:20px;
 }
+#left-buttons,
+#right-buttons{
+	overflow:auto;
+	padding-top:10px;
+}
 #left-losses,
 #right-losses{
 	position:absolute; bottom:0;
@@ -77,6 +86,7 @@ p{
 	float:left;
 	margin-right:4%;
 	font-size:50px;
+	overflow:auto;
 }
 
 #right-box{

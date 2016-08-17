@@ -3,9 +3,11 @@ $(document).ready(function(){
 	var isPlayer2 = false;
 	var player1name = "";
 	var player2name = "";
-	var player1choice = false;
-	var player2choice = false;
+	var player1choice = "";
+	var player2choice = "";
 	var gameStarted = false;
+	var player2wins = 0;
+	var player2losses = 0;
 	var config = {
 		apiKey: "AIzaSyCz6aX9O3yrKDOXqAPw5-iNkP6CCAMo88Y",
     	authDomain: "rps-multiplayer-b672d.firebaseapp.com",
@@ -119,39 +121,41 @@ $(document).ready(function(){
 			// Remove chat from database and display that player has disconnected
 			chatRef.remove();
 			$("#chat-output").append($("<p>"+snapshot.val().name +" has disconnected.</p>"));
+			$("#right-upper-text").text("Waiting for Player 2");
+			$("#right-wins").empty();
+			$("#right-losses").empty();
 		}
 
-		// If player 1 disconnected, player 2 gets assigned to player 1
+		// If player 1 disconnected (and there is a player 2), player 2 gets assigned to player 1
 		if(player1name == snapshot.val().name && player2name != ""){
 
 			// Display player has disconnect and that user is changed to player 1
 			$("#chat-output").append($("<p>"+snapshot.val().name+" has disconnected. You are now Player 1</p>"));
 
+			// If doesn't work, move to bottom
+			twoRef.update({name:""});
+	  		twoRef.remove();
+
 			isPlayer1 = true;
 			isPlayer2 = false;
+			gameStarted = false;
+			player1name = player2name;
+			player2name = "";
+			player1choice = "";
+			player2choice = "";
 
 	  		oneRef.set({
 	  			choice:"",
-	  			losses:0,
-	  			name:"",
-	  			wins:0
+	  			losses:player2losses,
+	  			name:player1name,
+	  			wins:player2wins
 	  		});
 	  		oneRef.onDisconnect().remove();
 
-
-	  // 		player1name = player2name;
-			// $("#left-upper-text").text(player1name);
-	  // 		$("#left-wins").text("Wins: " + snapshot.val().wins);
-	  // 		$("#left-losses").text("Losses: " + snapshot.val().losses);
-
-			// if(isPlayer1){
-			// 	$("#name-input").text("Hi, " + snapshot.val().name + "! You are Player 1");
-	  // 			gameStarted = true;
-			// }
-
-
-	  		twoRef.update({name:""});
-	  		twoRef.remove();
+	  		// Wait for new player
+	  		$("#right-upper-text").text("Waiting for Player 2");
+			$("#right-wins").empty();
+			$("#right-losses").empty();
 		}
 	
 	});
@@ -186,7 +190,7 @@ $(document).ready(function(){
 			}
 			else if(isPlayer1){
 				$("#left-buttons").empty();
-				$("#left-buttons").text(player1choice);
+				$("#left-buttons").html("<br><br><h1>"+player1choice+"</h1>");
 				$("#turn").text("Waiting for " + player2name + " to choose.");
 			}
 		}		
@@ -201,8 +205,8 @@ $(document).ready(function(){
 			player2choice = snapshot.val();
 
 			// Display
-			$("#right-buttons").text(player2choice);
-			$("#left-buttons").text(player1choice);
+			$("#right-buttons").html("<br><br><h1>"+player2choice+"</h1>");
+			$("#left-buttons").html("<br><br><h1>"+player1choice+"</h1>");
 
 			$("#middle-text").show();
 
@@ -223,6 +227,8 @@ $(document).ready(function(){
 					twoRef.update({losses:temp});
 					$("#right-losses").text("Losses: " + temp);
 				});
+
+				player2losses++;
 			}
 
 			// If player 2 wins...
@@ -242,6 +248,8 @@ $(document).ready(function(){
 					twoRef.update({wins:temp});
 					$("#right-wins").text("Wins: " + temp);
 				});
+
+				player2wins++;
 			}
 
 			// If tie, display
