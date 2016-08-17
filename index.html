@@ -3,11 +3,47 @@
 <head>
 	<meta charset="UTF-8">
 	<title>Multiplayer RPS</title>
-
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+	<link href='https://fonts.googleapis.com/css?family=Passion+One' rel='stylesheet' type='text/css'>
+	<link rel="stylesheet" href="assets/css/reset.css">
+	<link rel="stylesheet" href="assets/css/style.css">
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
-	<script src="https://www.gstatic.com/firebasejs/3.1.0/firebase.js"></script>
+	<script src="https://www.gstatic.com/firebasejs/3.2.1/firebase.js"></script>
+	<script type="text/javascript" src="https://code.jquery.com/jquery-2.2.0.min.js"></script>
 </head>
 <body>
+	<header>Rock Paper Scissors</header>
+	<div id="main">
+		<form id="name-input">
+			<input type="text" class="form-control" id="username" placeholder="Name">
+			<button type="submit" class="btn btn-default" id="start">Start</button>
+		</form>
+		<div id="turn"></div>
+		<div id="boxes">
+			<div id="left-box">
+				<div id="left-upper-text">Waiting for Player 1</div>
+				<div id="left-buttons"></div>
+				<div id="left-wins"></div>
+				<div id="left-losses"></div>
+			</div>
+			<div id="middle-box">
+				<div id="middle-text"></div>
+			</div>
+			<div id="right-box">
+				<div id="right-upper-text">Waiting for Player 2</div>
+				<div id="right-buttons"></div>
+				<div id="right-wins"></div>
+				<div id="right-losses"></div>
+			</div>
+		</div>
+		<div id="chat">
+			<div id="chat-output"></div>
+			<form>
+    			<input type="text" class="form-control" id="chat-input" placeholder="Chat here">
+  				<button type="submit" class="btn btn-default" id="send">Send</button>
+			</form>
+		</div>
+	</div>
 	<script src="assets/javascript/logic.js"></script>
 </body>
 </html>

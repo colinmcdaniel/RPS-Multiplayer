@@ -1,0 +1,108 @@
+body{
+	text-align:center;
+	background-color:#7FDBFF;
+	font-family: 'Passion One', cursive;
+}
+header{
+	background-color:#001f3f;
+	color:#7FDBFF;
+	overflow:auto;
+	font-size:35px;
+	padding:5px;
+}
+#send{
+	width:15%;
+	float:right;
+	margin-top:0;
+	background-color:#DDDDDD;
+}
+#main{
+	width:90%;
+	margin:0 auto;
+}
+#name-input{
+	width:40%;
+	margin:0 auto;
+	overflow:auto;
+}
+#username{
+	width:74%;
+	float:left;
+	padding:5px;
+}
+#start{
+	width:25%;
+	float:right;
+	color:white;
+	background-color:red;
+}
+#turn{
+	padding-bottom:5px;
+}
+#boxes{
+	overflow:auto;
+}
+#left-box{
+	border:solid;
+	width: 31%;
+	height:200px;
+	float:left;
+	margin-right:4%;
+	position:relative;
+}
+#left-lower-text,
+#right-lower-text{
+	position:absolute; bottom:0;
+	text-align:center;
+	width:100%;
+}
+#middle-box{
+	border:solid;
+	width: 31%;
+	height:200px;
+	float:left;
+	margin-right:4%;
+}
+
+#right-box{
+	border:solid;
+	width: 30%;
+	height:200px;
+	float:left;
+	position:relative;
+}
+#rock{
+	background-color:#001f3f;
+	color:#7FDBFF;
+	width:90%;
+	margin-top:2px;
+	margin-bottom:2px;
+}
+#paper{
+	background-color:#001f3f;
+	color:#7FDBFF;
+	width:90%;
+	margin-top:2px;
+	margin-bottom:2px;
+}
+#scissors{
+	background-color:#001f3f;
+	color:#7FDBFF;
+	width:90%;
+	margin-top:2px;
+	margin-bottom:2px;
+}
+#chat{
+	width:70%;
+	margin:30px auto;
+}
+#chat-output{
+	background:white;
+	height:120px;
+	border-radius: 3px;
+	margin-bottom:5px;
+}
+#chat-input{
+	width:84%;
+	float:left;
+}
