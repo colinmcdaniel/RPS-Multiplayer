@@ -10,6 +10,9 @@ header{
 	font-size:35px;
 	padding:5px;
 }
+p{
+	text-align:left;
+}
 #send{
 	width:15%;
 	float:right;

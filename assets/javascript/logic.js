@@ -21,8 +21,11 @@ $(document).ready(function(){
 	var database = firebase.database();
 	var playersRef = database.ref("players");
 	var turnRef = database.ref("turn");
+	var chatRef = database.ref("chat");
 	var oneRef = database.ref("players/1");
 	var twoRef = database.ref("players/2");
+
+	$("#chat").hide();
 
 	$("#start").on("click", function() {
 		var name = $('#username').val().trim();
@@ -80,6 +83,10 @@ $(document).ready(function(){
 	  		$("#right-wins").text("Wins: " + snapshot.val().wins);
 	  		$("#right-losses").text("Losses: " + snapshot.val().losses);
 
+	  		chatRef.set({latestchat:""});
+	  		$("#chat-output").val("");
+	  		$("#chat").fadeIn("slow");
+
 	  		displayLeftButtons();
 
 			if(isPlayer2){
@@ -91,8 +98,9 @@ $(document).ready(function(){
 	// If player disconnects...
 	playersRef.on("child_removed", function(snapshot){
 		turnRef.remove();
-		$("#middle-text").show();
-		$("#middle-text").text("Other player disconnected. Please refresh page to begin again.");
+		chatRef.remove();
+
+		$("#chat-output").append($("<p>"+snapshot.val().name +" has disconnected.</p>"));
 	});
 
 	// When user chooses rock, paper, or scissors, write choice to Firebase and increment turn
@@ -181,6 +189,26 @@ $(document).ready(function(){
 			twoRef.update({choice:""});
 
 			setTimeout(displayLeftButtons,5000);
+		}
+	});
+
+	$("#send").on("click", function() {
+		var txt = $('#chat-input').val();
+		$("#chat-input").val("");
+		$("#chat-input").removeAttr("placeholder");
+
+		if(isPlayer1)
+			chatRef.update({latestchat:player1name + ": " + txt});
+		else if(isPlayer2)
+			chatRef.update({latestchat:player2name + ": " + txt});
+
+		return false;
+	});
+
+	chatRef.on("child_changed", function(snapshot) {
+		if(snapshot.val() != ""){
+			$("#chat-output").append($("<p>"+snapshot.val()+"</p>"));
+			chatRef.update({latestchat:""});
 		}
 	});
 
