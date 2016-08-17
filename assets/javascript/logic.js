@@ -1,7 +1,4 @@
 $(document).ready(function(){
-	var wins = 0;
-	var losses = 0;
-	var turn = 1;
 	var isPlayer1 = false;
 	var isPlayer2 = false;
 	var player1name = "";
@@ -20,52 +17,66 @@ $(document).ready(function(){
 
 	var database = firebase.database();
 	var playersRef = database.ref("players");
-	var turnRef = database.ref("turn");
+
+	// var turnRef = database.ref("turn");
+
 	var chatRef = database.ref("chat");
 	var oneRef = database.ref("players/1");
 	var twoRef = database.ref("players/2");
 
 	$("#chat").hide();
 
+	// When player clicks start...
 	$("#start").on("click", function() {
+
+		// Get name
 		var name = $('#username').val().trim();
 	
 		database.ref().once("value", function(snapshot) {
+
+			// If no players are present, assign to player 1
 	  		if(!snapshot.hasChild("players/1") && !snapshot.hasChild("players/2")){
 	  			isPlayer1 = true;
 
 	  			oneRef.set({
 	  				choice:"",
-	  				losses:losses,
+	  				losses:0,
 	  				name:name,
-	  				wins:wins
+	  				wins:0
 	  			});
 	  			oneRef.onDisconnect().remove();
 	  		}
+
+	  		// If only player 1 is present, assign to player 2
 	  		else if(snapshot.hasChild("players/1") && !snapshot.hasChild("players/2")){
 	  			isPlayer2 = true;
 	  			gameStarted = true;
 
 	  			twoRef.set({
 	  				choice:"",
-	  				losses:losses,
+	  				losses:0,
 	  				name:name,
-	  				wins:wins
+	  				wins:0
 	  			});
 	  			twoRef.onDisconnect().remove();
 
-	  			turnRef.set(turn);
+	  			// turnRef.set(0);
 	  		}
+
+	  		// If 2 players are already present, tell user game is full
 	  		else{
 	  			$("#name-input").text("Sorry, the game is already full. Please try again later.");
 	  		}
 		});
 
+		// Don't refresh page when submit name
 		return false;
 	});
 
-	// When new player is added...
+	// When new player is added to game...
 	playersRef.on("child_added", function(snapshot){
+
+		// If new player is player 1, display on left
 		if(gameStarted == false){
 			player1name = snapshot.val().name;
 			$("#left-upper-text").text(snapshot.val().name);
@@ -77,6 +88,8 @@ $(document).ready(function(){
 	  			gameStarted = true;
 			}
 		}
+
+		// If new player is player 2, display on right and start chat
 		else if(gameStarted == true){
 			player2name = snapshot.val().name;
 			$("#right-upper-text").text(snapshot.val().name);
@@ -97,20 +110,60 @@ $(document).ready(function(){
 
 	// If player disconnects...
 	playersRef.on("child_removed", function(snapshot){
-		turnRef.remove();
-		chatRef.remove();
 
-		$("#chat-output").append($("<p>"+snapshot.val().name +" has disconnected.</p>"));
+		// turnRef.remove();
+
+		// If player 2 disconnects (and it was not player 2 changing to player 1)...
+		if(player2name == snapshot.val().name && snapshot.val().name != ""){
+			
+			// Remove chat from database and display that player has disconnected
+			chatRef.remove();
+			$("#chat-output").append($("<p>"+snapshot.val().name +" has disconnected.</p>"));
+		}
+
+		// If player 1 disconnected, player 2 gets assigned to player 1
+		if(player1name == snapshot.val().name && player2name != ""){
+
+			// Display player has disconnect and that user is changed to player 1
+			$("#chat-output").append($("<p>"+snapshot.val().name+" has disconnected. You are now Player 1</p>"));
+
+			isPlayer1 = true;
+			isPlayer2 = false;
+
+	  		oneRef.set({
+	  			choice:"",
+	  			losses:0,
+	  			name:"",
+	  			wins:0
+	  		});
+	  		oneRef.onDisconnect().remove();
+
+
+	  // 		player1name = player2name;
+			// $("#left-upper-text").text(player1name);
+	  // 		$("#left-wins").text("Wins: " + snapshot.val().wins);
+	  // 		$("#left-losses").text("Losses: " + snapshot.val().losses);
+
+			// if(isPlayer1){
+			// 	$("#name-input").text("Hi, " + snapshot.val().name + "! You are Player 1");
+	  // 			gameStarted = true;
+			// }
+
+
+	  		twoRef.update({name:""});
+	  		twoRef.remove();
+		}
+	
 	});
 
-	// When user chooses rock, paper, or scissors, write choice to Firebase and increment turn
+	// When user chooses rock, paper, or scissors, write choice to Firebase 
 	$(document).on("click","button", function(){
 		var choice = $(this).data("name");
 
 		// Increments turn in database by 1
-		turnRef.transaction(function(currentRank) {
-  			return currentRank+1;
-		});
+		// turnRef.transaction(function(currentRank) {
+  // 			return currentRank+1;
+		// });
 
 		if(isPlayer1)
 			oneRef.update({choice:choice});
@@ -118,14 +171,14 @@ $(document).ready(function(){
 			twoRef.update({choice:choice});
 	});
 
-	// When player1 makes choice...
+	// When player1 makes new choice...
 	oneRef.on("child_changed", function(snapshot){
 		if(snapshot.val() == "Rock" || snapshot.val() == "Paper" || snapshot.val() == "Scissors"){
 
 			// Save to variable
 			player1choice = snapshot.val();
 
-			// Display
+			// Display appropriate divs
 			if(isPlayer2){
 				$("#turn").text("It's your turn!");
 				
@@ -153,10 +206,13 @@ $(document).ready(function(){
 
 			$("#middle-text").show();
 
-			// Display winner
+			// If player 1 wins...
 			if((player1choice=="Paper"&&player2choice=="Rock") || (player1choice=="Rock"&&player2choice=="Scissors") || (player1choice=="Scissors"&&player2choice=="Paper")){
+				
+				// Display winner
 				$("#middle-text").text(player1name + " wins!");
 
+				// Update and display wins/losses for players
 				oneRef.once("value", function(snap) {
 					var temp = snap.child("wins").val() + 1;
 					oneRef.update({wins:temp});
@@ -168,9 +224,14 @@ $(document).ready(function(){
 					$("#right-losses").text("Losses: " + temp);
 				});
 			}
+
+			// If player 2 wins...
 			else if((player1choice=="Rock"&&player2choice=="Paper") || (player1choice=="Scissors"&&player2choice=="Rock") || (player1choice=="Paper"&&player2choice=="Scissors")){
+				
+				// Display winner
 				$("#middle-text").text(player2name + " wins!");
 
+				// Update and display wins/losses for players
 				oneRef.once("value", function(snap) {
 					var temp = snap.child("losses").val() + 1;
 					oneRef.update({losses:temp});
@@ -182,32 +243,51 @@ $(document).ready(function(){
 					$("#right-wins").text("Wins: " + temp);
 				});
 			}
+
+			// If tie, display
 			else
 				$("#middle-text").text("Tie game!");
 
 			oneRef.update({choice:""});
 			twoRef.update({choice:""});
 
+			// Wait 5 seconds, then start next turn
 			setTimeout(displayLeftButtons,5000);
 		}
 	});
 
+	// When player clicks Send chat button...
 	$("#send").on("click", function() {
+
+		// Get user input
 		var txt = $('#chat-input').val();
+
+		// Remove from input box
 		$("#chat-input").val("");
+
+		// Remove placerholder after first chat sent
 		$("#chat-input").removeAttr("placeholder");
 
+		// Add chat to Firebase with appropriate name
 		if(isPlayer1)
 			chatRef.update({latestchat:player1name + ": " + txt});
 		else if(isPlayer2)
 			chatRef.update({latestchat:player2name + ": " + txt});
 
+		// Don't refresh page upon sent chat
 		return false;
 	});
 
+	// Upon new chat submission
 	chatRef.on("child_changed", function(snapshot) {
 		if(snapshot.val() != ""){
+
+			// Append inputted text from Firebase to chat div
 			$("#chat-output").append($("<p>"+snapshot.val()+"</p>"));
+
+			// Scroll down
+			$('#chat-output').animate({scrollTop: $('#chat-output').prop("scrollHeight")}, 500);
+
 			chatRef.update({latestchat:""});
 		}
 	});
