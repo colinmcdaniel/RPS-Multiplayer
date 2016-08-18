@@ -26,6 +26,12 @@ $(document).ready(function(){
 	var oneRef = database.ref("players/1");
 	var twoRef = database.ref("players/2");
 
+
+
+	var initialDataLoaded = false;
+
+
+
 	$("#chat").hide();
 
 	// When player clicks start...
@@ -140,14 +146,13 @@ $(document).ready(function(){
 			isPlayer2 = false;
 			gameStarted = false;
 			player1name = player2name;
-			player2name = "";
 			player1choice = "";
 			player2choice = "";
 
 	  		oneRef.set({
 	  			choice:"",
 	  			losses:player2losses,
-	  			name:player1name,
+	  			name:player2name,
 	  			wins:player2wins
 	  		});
 	  		oneRef.onDisconnect().remove();
@@ -156,6 +161,7 @@ $(document).ready(function(){
 	  		$("#right-upper-text").text("Waiting for Player 2");
 			$("#right-wins").empty();
 			$("#right-losses").empty();
+			// $("#upper-left-text").text(player1name);
 		}
 	
 	});
@@ -198,7 +204,6 @@ $(document).ready(function(){
 
 	// When player2 makes choice...
 	twoRef.on("child_changed", function(snapshot){
-
 		if(snapshot.val() == "Rock" || snapshot.val() == "Paper" || snapshot.val() == "Scissors"){
 
 			// Save to variable

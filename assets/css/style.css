@@ -85,7 +85,8 @@ p{
 	height:200px;
 	float:left;
 	margin-right:4%;
-	font-size:50px;
+	font-size:40px;
+	padding-top:10px;
 	overflow:auto;
 }
 
