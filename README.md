@@ -1,4 +1,4 @@
-# Los Angeles Transportation Project Tool
+# Multiplayer Rock, Paper, Scissors
 
 Two-player online multiplayer game that utilizes Firebase to store and update user responses in order to allow two users to interact across browsers.
 
