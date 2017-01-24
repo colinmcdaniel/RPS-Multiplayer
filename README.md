@@ -5,7 +5,7 @@
 
 ## Functionality
 
-Two-player online multiplayer Rock Paper Scissors game that utilizes Firebase to store and update user responses in order to allow two users to interact across browsers. The game also has a chat functionality.
+Two-player online multiplayer Rock Paper Scissors game that utilizes Firebase to store players' moves in order to allow two users to interact across browsers. The game also has a chat functionality.
 
 ## Technologies
 
